@@ -10,8 +10,8 @@ android {
         applicationId = "com.callingchaos.starbase"
         minSdk = 24
         targetSdk = 36
-        versionCode = 4
-        versionName = "0.4.0"
+        versionCode = 5
+        versionName = "0.4.1"
 
         buildConfigField("String", "API_BASE_URL", "\"\"")
         buildConfigField("String", "REWARDED_AD_UNIT_ID", "\"ca-app-pub-3940256099942544/5224354917\"")
