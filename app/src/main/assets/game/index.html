@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+  <title>Whisper Run: Chasers</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <canvas id="game"></canvas>
+  <div id="hud">
+    <div class="topbar">
+      <div><b>MAINTENANCE FLOOR</b><span id="objective">Find the security keycard</span></div>
+      <div class="meter"><label>FILTER</label><i id="filterFill"></i></div>
+      <div class="meter threat"><label>THREAT</label><i id="threatFill"></i></div>
+      <div id="noise">NOISE <b>0</b></div>
+    </div>
+    <div id="toast"></div>
+    <div id="joystick"><div id="stick"></div></div>
+    <div id="actions">
+      <button id="interact">USE</button>
+      <button id="sprint">RUN</button>
+      <button id="decoy">DECOY <span id="decoyCount">2</span></button>
+    </div>
+    <button id="menuBtn">☰</button>
+  </div>
+
+  <section id="menu" class="panel open">
+    <div class="brand"><small>CALLING CHAOS PRESENTS</small><h1>WHISPER RUN</h1><h2>CHASERS</h2></div>
+    <p class="tag">Stay quiet. Take what matters. Get out.</p>
+    <button data-action="play" class="primary">PLAY MAINTENANCE FLOOR</button>
+    <button data-action="mic">ENABLE MIC NOISE</button>
+    <button data-action="store">STORE / SUPPORT</button>
+    <button data-action="privacy">PRIVACY OPTIONS</button>
+    <div class="fine">Mic is optional. Without it, movement and actions create game noise instead. Core play works offline.</div>
+  </section>
+
+  <section id="store" class="panel">
+    <button class="close">×</button><h3>SUPPORT THE RUN</h3>
+    <div class="limit">Monthly player spend cap: <b>$25</b></div>
+    <article><b>Rewarded Supply Drop</b><span>Watch by choice • +1 decoy</span><button data-reward="decoy">WATCH</button></article>
+    <article><b>Shadow Runner Cosmetic</b><span>Visual only • planned $4.99</span><button data-buy="cosmetic_shadow_runner">BUY</button></article>
+    <article><b>Season 1 Access</b><span>Cosmetics, story, challenge track • planned $7.99</span><button data-buy="season_pass_s1">BUY</button></article>
+    <article><b>Recovery Pack S1</b><span>Catch-up only • planned $4.99</span><button data-buy="recovery_pack_s1">BUY</button></article>
+    <p class="fine">No loot boxes. No paid combat power. Purchases are server-verified before entitlement is granted.</p>
+  </section>
+
+  <section id="death" class="panel compact"><h3>THE CRAWLER FOUND YOU</h3><p id="deathReason"></p><button data-action="retry" class="primary">RETRY</button></section>
+  <section id="win" class="panel compact"><h3>UPLOAD COMPLETE</h3><p>Alliance salvage secured. Something heard the transmission.</p><div id="runStats"></div><button data-action="retry" class="primary">RUN AGAIN</button></section>
+  <script src="game.js"></script>
+</body>
+</html>
