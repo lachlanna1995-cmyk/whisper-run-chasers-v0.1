@@ -72,7 +72,7 @@
       <div><small>CARRY</small><b>8 SLOTS</b><span>STORAGE LINK</span></div>
     </div>
     <button id="launchMission" class="bigDeploy">BEGIN DEPLOYMENT</button>
-    <p class="fine">Visual rebuild v0.4. Base-first portrait strategy interface.</p>
+    <p class="fine">Visual rebuild v0.4.1. Base-first portrait strategy interface.</p>
   </section>
 
   <section id="infoPanel" class="panel compact">
@@ -88,16 +88,34 @@
     <button>ACCOUNT</button>
     <button>CONTROLS</button>
     <button>PRIVACY</button>
-    <p class="fine">v0.4 visual rebuild</p>
+    <p class="fine">v0.4.1 Android compatibility build</p>
   </section>
 
+  <script>
+    // Compatibility for Android System WebView versions that lack Canvas roundRect().
+    if (window.CanvasRenderingContext2D && !CanvasRenderingContext2D.prototype.roundRect) {
+      CanvasRenderingContext2D.prototype.roundRect = function(x,y,w,h,r){
+        r = Math.max(0, Math.min(Number(r)||0, Math.abs(w)/2, Math.abs(h)/2));
+        this.moveTo(x+r,y);
+        this.lineTo(x+w-r,y); this.quadraticCurveTo(x+w,y,x+w,y+r);
+        this.lineTo(x+w,y+h-r); this.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+        this.lineTo(x+r,y+h); this.quadraticCurveTo(x,y+h,x,y+h-r);
+        this.lineTo(x,y+r); this.quadraticCurveTo(x,y,x+r,y);
+        return this;
+      };
+    }
+    window.addEventListener('error', function(e){
+      var d=document.createElement('div');
+      d.style.cssText='position:fixed;z-index:99999;left:12px;right:12px;top:140px;padding:14px;background:#2a0909;color:#fff;border:2px solid #ff6868;border-radius:12px;font:12px monospace;white-space:pre-wrap';
+      d.textContent='STAR BASE RENDER ERROR\n'+(e.message||'Unknown error')+'\n'+(e.filename||'')+':'+(e.lineno||'');
+      document.body.appendChild(d);
+    });
+  </script>
   <script src="art.js"></script>
   <script src="game.js"></script>
   <script>
     if (innerHeight > innerWidth) {
-      setTimeout(() => {
-        document.getElementById('zoomOut')?.click();
-      }, 60);
+      setTimeout(function(){ var b=document.getElementById('zoomOut'); if(b) b.click(); }, 60);
     }
   </script>
 </body>
