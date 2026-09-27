@@ -1,6 +1,8 @@
 package com.whisperrun.chasers;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.android.billingclient.api.AcknowledgePurchaseParams;
 import com.android.billingclient.api.BillingClient;
@@ -21,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 final class BillingManager implements PurchasesUpdatedListener {
     interface Listener {
@@ -28,9 +31,13 @@ final class BillingManager implements PurchasesUpdatedListener {
         void onVerifiedEntitlement(String productId);
     }
 
-    // Launch rule: monetization never changes progression, combat power, resources, timers, or matchmaking.
     private static final String[] PRODUCT_IDS = {
-            "starbase_supporter_cosmetics"
+            "support_025",
+            "support_050",
+            "support_100",
+            "support_200",
+            "support_500",
+            "founder_launch_series_100"
     };
 
     private final Activity activity;
@@ -38,11 +45,13 @@ final class BillingManager implements PurchasesUpdatedListener {
     private final NetworkClient network;
     private final Map<String, ProductDetails> products = new HashMap<>();
     private final BillingClient billingClient;
+    private final SharedPreferences accountPrefs;
 
     BillingManager(Activity activity, NetworkClient network, Listener listener) {
         this.activity = activity;
         this.network = network;
         this.listener = listener;
+        this.accountPrefs = activity.getSharedPreferences("starbase_account", Context.MODE_PRIVATE);
         PendingPurchasesParams pending = PendingPurchasesParams.newBuilder()
                 .enableOneTimeProducts()
                 .build();
@@ -66,6 +75,15 @@ final class BillingManager implements PurchasesUpdatedListener {
                 listener.onBillingStatus("disconnected", "Play Billing disconnected");
             }
         });
+    }
+
+    private String getOrCreateAccountId() {
+        String id = accountPrefs.getString("account_id", null);
+        if (id == null || id.isEmpty()) {
+            id = UUID.randomUUID().toString();
+            accountPrefs.edit().putString("account_id", id).apply();
+        }
+        return id;
     }
 
     private void queryProducts() {
@@ -100,14 +118,20 @@ final class BillingManager implements PurchasesUpdatedListener {
                 queryProducts();
                 return;
             }
-            BillingFlowParams.ProductDetailsParams.Builder pd = BillingFlowParams.ProductDetailsParams.newBuilder().setProductDetails(detail);
+            BillingFlowParams.ProductDetailsParams.Builder pd =
+                    BillingFlowParams.ProductDetailsParams.newBuilder().setProductDetails(detail);
             List<ProductDetails.OneTimePurchaseOfferDetails> offers = detail.getOneTimePurchaseOfferDetailsList();
             if (offers != null && !offers.isEmpty()) pd.setOfferToken(offers.get(0).getOfferToken());
             List<BillingFlowParams.ProductDetailsParams> items = new ArrayList<>();
             items.add(pd.build());
-            BillingFlowParams flow = BillingFlowParams.newBuilder().setProductDetailsParamsList(items).build();
+            BillingFlowParams flow = BillingFlowParams.newBuilder()
+                    .setProductDetailsParamsList(items)
+                    .setObfuscatedAccountId(getOrCreateAccountId())
+                    .build();
             BillingResult launch = billingClient.launchBillingFlow(activity, flow);
-            if (launch.getResponseCode() != BillingClient.BillingResponseCode.OK) listener.onBillingStatus("launch_failed", launch.getDebugMessage());
+            if (launch.getResponseCode() != BillingClient.BillingResponseCode.OK) {
+                listener.onBillingStatus("launch_failed", launch.getDebugMessage());
+            }
         });
     }
 
@@ -133,6 +157,7 @@ final class BillingManager implements PurchasesUpdatedListener {
             JSONObject request = new JSONObject();
             request.put("purchaseToken", purchase.getPurchaseToken());
             request.put("packageName", activity.getPackageName().replace(".debug", ""));
+            request.put("accountId", getOrCreateAccountId());
             JSONArray ids = new JSONArray();
             for (String product : purchase.getProducts()) ids.put(product);
             request.put("productIds", ids);
@@ -148,7 +173,9 @@ final class BillingManager implements PurchasesUpdatedListener {
                         return;
                     }
                     if (!purchase.isAcknowledged()) {
-                        AcknowledgePurchaseParams ack = AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchase.getPurchaseToken()).build();
+                        AcknowledgePurchaseParams ack = AcknowledgePurchaseParams.newBuilder()
+                                .setPurchaseToken(purchase.getPurchaseToken())
+                                .build();
                         billingClient.acknowledgePurchase(ack, ackResult -> {});
                     }
                     for (String product : purchase.getProducts()) listener.onVerifiedEntitlement(product);
