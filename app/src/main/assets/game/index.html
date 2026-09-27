@@ -12,10 +12,12 @@
   <header id="topHud">
     <button id="commanderBtn" class="avatarBtn" aria-label="Commander">SB</button>
     <div class="baseIdentity"><b>STAR BASE</b><span id="baseLevel">COMMAND 1</span></div>
-    <div class="resource"><i class="alloyDot"></i><small>ALLOY</small><b id="alloy">320</b></div>
-    <div class="resource"><i class="dataDot"></i><small>DATA</small><b id="data">40</b></div>
-    <div class="resource"><i class="orangeDot"></i><small>ORANGE</small><b id="orangeGoo">0</b></div>
-    <div class="resource"><i class="purpleDot"></i><small>PURPLE</small><b id="purpleGoo">0</b></div>
+    <div class="resourceStrip">
+      <div class="resource"><i class="alloyDot"></i><small>ALLOY</small><b id="alloy">320</b></div>
+      <div class="resource"><i class="dataDot"></i><small>DATA</small><b id="data">40</b></div>
+      <div class="resource"><i class="orangeDot"></i><small>ORANGE</small><b id="orangeGoo">0</b></div>
+      <div class="resource"><i class="purpleDot"></i><small>PURPLE</small><b id="purpleGoo">0</b></div>
+    </div>
     <div class="builder"><small>BUILDERS</small><b>2 / 2</b></div>
     <button id="settingsBtn" class="squareBtn">☰</button>
   </header>
@@ -70,7 +72,7 @@
       <div><small>CARRY</small><b>8 SLOTS</b><span>STORAGE LINK</span></div>
     </div>
     <button id="launchMission" class="bigDeploy">BEGIN DEPLOYMENT</button>
-    <p class="fine">This interface test keeps the combat layer behind deployment. The base is the home screen.</p>
+    <p class="fine">Interface vertical slice. The base remains the home screen.</p>
   </section>
 
   <section id="infoPanel" class="panel compact">
@@ -86,9 +88,17 @@
     <button>ACCOUNT</button>
     <button>CONTROLS</button>
     <button>PRIVACY</button>
-    <p class="fine">v0.3 interface vertical slice</p>
+    <p class="fine">v0.3 portrait interface vertical slice</p>
   </section>
 
   <script src="game.js"></script>
+  <script>
+    if (innerHeight > innerWidth) {
+      setTimeout(() => {
+        document.getElementById('zoomOut')?.click();
+        document.getElementById('zoomOut')?.click();
+      }, 60);
+    }
+  </script>
 </body>
 </html>
