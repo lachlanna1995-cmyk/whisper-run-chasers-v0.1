@@ -1,0 +1,10 @@
+<resources>
+    <style name="Theme.WhisperRun" parent="android:style/Theme.Material.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:navigationBarColor">#05070A</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:colorAccent">#80FFE8</item>
+    </style>
+</resources>
