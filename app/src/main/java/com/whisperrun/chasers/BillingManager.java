@@ -29,7 +29,7 @@ final class BillingManager implements PurchasesUpdatedListener {
     }
 
     private static final String[] PRODUCT_IDS = {
-            "cosmetic_shadow_runner",
+            "cosmetic_dead_orbit_founder",
             "season_pass_s1",
             "recovery_pack_s1"
     };
@@ -58,11 +58,8 @@ final class BillingManager implements PurchasesUpdatedListener {
         billingClient.startConnection(new BillingClientStateListener() {
             @Override
             public void onBillingSetupFinished(BillingResult billingResult) {
-                if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
-                    queryProducts();
-                } else {
-                    listener.onBillingStatus("setup_failed", billingResult.getDebugMessage());
-                }
+                if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) queryProducts();
+                else listener.onBillingStatus("setup_failed", billingResult.getDebugMessage());
             }
 
             @Override
@@ -92,9 +89,7 @@ final class BillingManager implements PurchasesUpdatedListener {
             return;
         }
         products.clear();
-        for (ProductDetails detail : detailsResult.getProductDetailsList()) {
-            products.put(detail.getProductId(), detail);
-        }
+        for (ProductDetails detail : detailsResult.getProductDetailsList()) products.put(detail.getProductId(), detail);
         listener.onBillingStatus("ready", Integer.toString(products.size()));
     }
 
@@ -106,21 +101,14 @@ final class BillingManager implements PurchasesUpdatedListener {
                 queryProducts();
                 return;
             }
-            BillingFlowParams.ProductDetailsParams.Builder pd =
-                    BillingFlowParams.ProductDetailsParams.newBuilder().setProductDetails(detail);
+            BillingFlowParams.ProductDetailsParams.Builder pd = BillingFlowParams.ProductDetailsParams.newBuilder().setProductDetails(detail);
             List<ProductDetails.OneTimePurchaseOfferDetails> offers = detail.getOneTimePurchaseOfferDetailsList();
-            if (offers != null && !offers.isEmpty()) {
-                pd.setOfferToken(offers.get(0).getOfferToken());
-            }
+            if (offers != null && !offers.isEmpty()) pd.setOfferToken(offers.get(0).getOfferToken());
             List<BillingFlowParams.ProductDetailsParams> items = new ArrayList<>();
             items.add(pd.build());
-            BillingFlowParams flow = BillingFlowParams.newBuilder()
-                    .setProductDetailsParamsList(items)
-                    .build();
+            BillingFlowParams flow = BillingFlowParams.newBuilder().setProductDetailsParamsList(items).build();
             BillingResult launch = billingClient.launchBillingFlow(activity, flow);
-            if (launch.getResponseCode() != BillingClient.BillingResponseCode.OK) {
-                listener.onBillingStatus("launch_failed", launch.getDebugMessage());
-            }
+            if (launch.getResponseCode() != BillingClient.BillingResponseCode.OK) listener.onBillingStatus("launch_failed", launch.getDebugMessage());
         });
     }
 
@@ -161,14 +149,10 @@ final class BillingManager implements PurchasesUpdatedListener {
                         return;
                     }
                     if (!purchase.isAcknowledged()) {
-                        AcknowledgePurchaseParams ack = AcknowledgePurchaseParams.newBuilder()
-                                .setPurchaseToken(purchase.getPurchaseToken())
-                                .build();
+                        AcknowledgePurchaseParams ack = AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchase.getPurchaseToken()).build();
                         billingClient.acknowledgePurchase(ack, ackResult -> {});
                     }
-                    for (String product : purchase.getProducts()) {
-                        listener.onVerifiedEntitlement(product);
-                    }
+                    for (String product : purchase.getProducts()) listener.onVerifiedEntitlement(product);
                 } catch (Exception ex) {
                     listener.onBillingStatus("verification_failed", "bad_server_response");
                 }
