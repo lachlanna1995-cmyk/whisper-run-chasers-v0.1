@@ -3,10 +3,10 @@ name: Star Base Android Build
 on:
   workflow_dispatch:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "visual-rebuild" ]
 
 concurrency:
-  group: starbase-android-main
+  group: starbase-android-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -27,7 +27,7 @@ jobs:
         run: gradle :app:assembleDebug :app:bundleRelease
       - uses: actions/upload-artifact@v4
         with:
-          name: star-base-dead-orbit-android
+          name: star-base-dead-orbit-${{ github.ref_name }}
           path: |
             app/build/outputs/apk/debug/*.apk
             app/build/outputs/bundle/release/*.aab
