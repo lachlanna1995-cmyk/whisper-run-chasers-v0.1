@@ -28,10 +28,9 @@ final class BillingManager implements PurchasesUpdatedListener {
         void onVerifiedEntitlement(String productId);
     }
 
+    // Launch rule: monetization never changes progression, combat power, resources, timers, or matchmaking.
     private static final String[] PRODUCT_IDS = {
-            "cosmetic_dead_orbit_founder",
-            "season_pass_s1",
-            "recovery_pack_s1"
+            "starbase_supporter_cosmetics"
     };
 
     private final Activity activity;
