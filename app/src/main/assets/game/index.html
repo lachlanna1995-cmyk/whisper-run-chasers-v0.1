@@ -3,50 +3,85 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
-  <title>Whisper Run: Chasers</title>
+  <title>STAR BASE: DEAD ORBIT</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <canvas id="game"></canvas>
-  <div id="hud">
-    <div class="topbar">
-      <div><b>MAINTENANCE FLOOR</b><span id="objective">Find the security keycard</span></div>
-      <div class="meter"><label>FILTER</label><i id="filterFill"></i></div>
-      <div class="meter threat"><label>THREAT</label><i id="threatFill"></i></div>
-      <div id="noise">NOISE <b>0</b></div>
+
+  <header id="topHud">
+    <div class="brand"><b>STAR BASE</b><span>DEAD ORBIT</span></div>
+    <div class="resource"><small>ALLOY</small><b id="alloy">120</b></div>
+    <div class="resource orange"><small>ORANGE GOO</small><b id="orangeGoo">0</b></div>
+    <div class="resource purple"><small>PURPLE GOO</small><b id="purpleGoo">0</b></div>
+    <div class="resource"><small>DATA</small><b id="data">0</b></div>
+    <div class="server"><small>SERVER</small><b id="serverId">01</b></div>
+  </header>
+
+  <section id="mainMenu" class="panel open">
+    <small class="eyebrow">CALLING CHAOS</small>
+    <h1>STAR BASE</h1>
+    <h2>DEAD ORBIT</h2>
+    <p class="tag">Build the base. Deploy. Recover resources. Exfil alive.</p>
+    <button data-action="base" class="primary">ENTER STAR BASE</button>
+    <button data-action="mission">QUICK DEPLOY</button>
+    <div class="futureModes">
+      <button disabled>WIPEOUT <small>Cross-server mode • future build</small></button>
+      <button disabled>LOST MODE <small>Portal mission • future build</small></button>
     </div>
-    <div id="toast"></div>
+    <p class="fine">Prototype v0.2. No loot boxes. No pay-to-win. Server and faction systems are staged, not faked.</p>
+  </section>
+
+  <section id="baseUI" class="screenUi">
+    <div class="leftCard">
+      <b>STAR BASE HQ</b>
+      <span id="commandLevel">COMMAND LEVEL 1</span>
+      <small>Tap a building to inspect or upgrade it.</small>
+      <button data-action="mission" class="primary">DEPLOY MISSION</button>
+      <button data-action="menu">MAIN MENU</button>
+    </div>
+    <div id="buildingCard" class="inspectCard hidden">
+      <b id="buildingName">COMMAND</b>
+      <span id="buildingLevel">LEVEL 1</span>
+      <p id="buildingEffect"></p>
+      <button id="upgradeBuilding">UPGRADE</button>
+      <small id="upgradeCost"></small>
+    </div>
+    <div class="bottomHint">HQ VIEW • drag to pan • pinch/scroll to zoom</div>
+  </section>
+
+  <section id="missionUI" class="screenUi">
+    <div class="missionStats">
+      <div><small>OXYGEN</small><b id="oxygen">100</b></div>
+      <div><small>FILTER</small><b id="filter">100</b></div>
+      <div class="infection"><small>INFECTION</small><b id="infection">0</b></div>
+      <div><small>AMMO</small><b id="ammo">60</b></div>
+      <div><small>CARRY</small><b id="carry">0 / 8</b></div>
+    </div>
+    <div id="objective">Recover resources and reach EXFIL.</div>
     <div id="joystick"><div id="stick"></div></div>
-    <div id="actions">
-      <button id="interact">USE</button>
-      <button id="sprint">RUN</button>
-      <button id="decoy">DECOY <span id="decoyCount">2</span></button>
-    </div>
-    <button id="menuBtn">☰</button>
-  </div>
-
-  <section id="menu" class="panel open">
-    <div class="brand"><small>CALLING CHAOS PRESENTS</small><h1>WHISPER RUN</h1><h2>CHASERS</h2></div>
-    <p class="tag">Stay quiet. Take what matters. Get out.</p>
-    <button data-action="play" class="primary">PLAY MAINTENANCE FLOOR</button>
-    <button data-action="mic">ENABLE MIC NOISE</button>
-    <button data-action="store">STORE / SUPPORT</button>
-    <button data-action="privacy">PRIVACY OPTIONS</button>
-    <div class="fine">Mic is optional. Without it, movement and actions create game noise instead. Core play works offline.</div>
+    <div id="aimPad"><div id="aimStick"></div></div>
+    <button id="fireBtn">FIRE</button>
+    <button id="interactBtn">USE</button>
+    <button id="exfilBtn" class="hidden">EXFIL</button>
+    <button id="missionMenu">☰</button>
+    <div id="toast"></div>
   </section>
 
-  <section id="store" class="panel">
-    <button class="close">×</button><h3>SUPPORT THE RUN</h3>
-    <div class="limit">Monthly player spend cap: <b>$25</b></div>
-    <article><b>Rewarded Supply Drop</b><span>Watch by choice • +1 decoy</span><button data-reward="decoy">WATCH</button></article>
-    <article><b>Shadow Runner Cosmetic</b><span>Visual only • planned $4.99</span><button data-buy="cosmetic_shadow_runner">BUY</button></article>
-    <article><b>Season 1 Access</b><span>Cosmetics, story, challenge track • planned $7.99</span><button data-buy="season_pass_s1">BUY</button></article>
-    <article><b>Recovery Pack S1</b><span>Catch-up only • planned $4.99</span><button data-buy="recovery_pack_s1">BUY</button></article>
-    <p class="fine">No loot boxes. No paid combat power. Purchases are server-verified before entitlement is granted.</p>
+  <section id="results" class="panel compact">
+    <h3 id="resultTitle">MISSION COMPLETE</h3>
+    <p id="resultText"></p>
+    <div id="resultLoot"></div>
+    <button data-action="base" class="primary">RETURN TO BASE</button>
+    <button data-action="mission">DEPLOY AGAIN</button>
   </section>
 
-  <section id="death" class="panel compact"><h3>THE CRAWLER FOUND YOU</h3><p id="deathReason"></p><button data-action="retry" class="primary">RETRY</button></section>
-  <section id="win" class="panel compact"><h3>UPLOAD COMPLETE</h3><p>Alliance salvage secured. Something heard the transmission.</p><div id="runStats"></div><button data-action="retry" class="primary">RUN AGAIN</button></section>
+  <section id="pausePanel" class="panel compact">
+    <h3>PAUSED</h3>
+    <button data-action="resume" class="primary">RESUME</button>
+    <button data-action="base">ABORT TO BASE</button>
+  </section>
+
   <script src="game.js"></script>
 </body>
 </html>
