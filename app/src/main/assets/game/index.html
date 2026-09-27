@@ -10,76 +10,83 @@
   <canvas id="game"></canvas>
 
   <header id="topHud">
-    <div class="brand"><b>STAR BASE</b><span>DEAD ORBIT</span></div>
-    <div class="resource"><small>ALLOY</small><b id="alloy">120</b></div>
-    <div class="resource orange"><small>ORANGE GOO</small><b id="orangeGoo">0</b></div>
-    <div class="resource purple"><small>PURPLE GOO</small><b id="purpleGoo">0</b></div>
-    <div class="resource"><small>DATA</small><b id="data">0</b></div>
-    <div class="server"><small>SERVER</small><b id="serverId">01</b></div>
+    <button id="commanderBtn" class="avatarBtn" aria-label="Commander">SB</button>
+    <div class="baseIdentity"><b>STAR BASE</b><span id="baseLevel">COMMAND 1</span></div>
+    <div class="resource"><i class="alloyDot"></i><small>ALLOY</small><b id="alloy">320</b></div>
+    <div class="resource"><i class="dataDot"></i><small>DATA</small><b id="data">40</b></div>
+    <div class="resource"><i class="orangeDot"></i><small>ORANGE</small><b id="orangeGoo">0</b></div>
+    <div class="resource"><i class="purpleDot"></i><small>PURPLE</small><b id="purpleGoo">0</b></div>
+    <div class="builder"><small>BUILDERS</small><b>2 / 2</b></div>
+    <button id="settingsBtn" class="squareBtn">☰</button>
   </header>
 
-  <section id="mainMenu" class="panel open">
-    <small class="eyebrow">CALLING CHAOS</small>
-    <h1>STAR BASE</h1>
-    <h2>DEAD ORBIT</h2>
-    <p class="tag">Build the base. Deploy. Recover resources. Exfil alive.</p>
-    <button data-action="base" class="primary">ENTER STAR BASE</button>
-    <button data-action="mission">QUICK DEPLOY</button>
-    <div class="futureModes">
-      <button disabled>WIPEOUT <small>Cross-server mode • future build</small></button>
-      <button disabled>LOST MODE <small>Portal mission • future build</small></button>
+  <aside id="missionRail">
+    <button id="deployBtn" class="deployBtn"><span>DEPLOY</span><small>OUTER SECTOR</small></button>
+    <button class="railBtn" id="factionBtn"><b>⚑</b><span>FACTION</span></button>
+    <button class="railBtn" id="mapBtn"><b>◎</b><span>SERVER 01</span></button>
+  </aside>
+
+  <section id="buildingCard" class="buildingCard hidden">
+    <button id="closeBuilding" class="closeX">×</button>
+    <div class="buildingTitle"><small id="buildingClass">BASE</small><b id="buildingName">COMMAND CORE</b><span id="buildingLevel">LEVEL 1</span></div>
+    <p id="buildingEffect"></p>
+    <div class="buildingActions">
+      <button id="upgradeBuilding" class="actionPrimary"><b>UPGRADE</b><small id="upgradeCost">120 ALLOY</small></button>
+      <button id="moveBuilding"><b>MOVE</b><small>REPOSITION</small></button>
+      <button id="infoBuilding"><b>INFO</b><small>DETAILS</small></button>
     </div>
-    <p class="fine">Prototype v0.2. No loot boxes. No pay-to-win. Server and faction systems are staged, not faked.</p>
   </section>
 
-  <section id="baseUI" class="screenUi">
-    <div class="leftCard">
-      <b>STAR BASE HQ</b>
-      <span id="commandLevel">COMMAND LEVEL 1</span>
-      <small>Tap a building to inspect or upgrade it.</small>
-      <button data-action="mission" class="primary">DEPLOY MISSION</button>
-      <button data-action="menu">MAIN MENU</button>
+  <section id="buildTray" class="buildTray">
+    <div class="trayTabs">
+      <button class="tab active" data-category="base">BASE</button>
+      <button class="tab" data-category="defense">DEFENSE</button>
+      <button class="tab" data-category="utility">UTILITY</button>
+      <button class="tab" data-category="decor">DECOR</button>
     </div>
-    <div id="buildingCard" class="inspectCard hidden">
-      <b id="buildingName">COMMAND</b>
-      <span id="buildingLevel">LEVEL 1</span>
-      <p id="buildingEffect"></p>
-      <button id="upgradeBuilding">UPGRADE</button>
-      <small id="upgradeCost"></small>
-    </div>
-    <div class="bottomHint">HQ VIEW • drag to pan • pinch/scroll to zoom</div>
+    <div id="buildItems" class="buildItems"></div>
+    <button id="trayClose" class="trayClose">⌄</button>
   </section>
 
-  <section id="missionUI" class="screenUi">
-    <div class="missionStats">
-      <div><small>OXYGEN</small><b id="oxygen">100</b></div>
-      <div><small>FILTER</small><b id="filter">100</b></div>
-      <div class="infection"><small>INFECTION</small><b id="infection">0</b></div>
-      <div><small>AMMO</small><b id="ammo">60</b></div>
-      <div><small>CARRY</small><b id="carry">0 / 8</b></div>
+  <button id="buildBtn" class="buildBtn"><b>＋</b><span>BUILD</span></button>
+  <button id="rotateBtn" class="rotateBtn">↻</button>
+  <div id="zoomControls"><button id="zoomIn">＋</button><button id="zoomOut">−</button></div>
+
+  <div id="modeBanner" class="modeBanner hidden"><b id="modeTitle">PLACE STRUCTURE</b><span id="modeHint">Tap an open tile. Drag to move the camera.</span><button id="cancelMode">CANCEL</button></div>
+  <div id="toast"></div>
+
+  <section id="deployPanel" class="panel">
+    <button class="closeX panelClose">×</button>
+    <small class="eyebrow">OUTER SECTOR 04</small>
+    <h2>RECOVERY RUN</h2>
+    <div class="sectorPreview">
+      <div><small>THREAT</small><b>MODERATE</b></div>
+      <div><small>ATMOSPHERE</small><b>TOXIC</b></div>
+      <div><small>OBJECTIVE</small><b>RECOVER / EXFIL</b></div>
     </div>
-    <div id="objective">Recover resources and reach EXFIL.</div>
-    <div id="joystick"><div id="stick"></div></div>
-    <div id="aimPad"><div id="aimStick"></div></div>
-    <button id="fireBtn">FIRE</button>
-    <button id="interactBtn">USE</button>
-    <button id="exfilBtn" class="hidden">EXFIL</button>
-    <button id="missionMenu">☰</button>
-    <div id="toast"></div>
+    <div class="loadoutRow">
+      <div><small>PRIMARY</small><b>CARBINE</b><span>STANDARD ISSUE</span></div>
+      <div><small>SUIT</small><b>FILTER MK I</b><span>100 CAPACITY</span></div>
+      <div><small>CARRY</small><b>8 SLOTS</b><span>STORAGE LINK</span></div>
+    </div>
+    <button id="launchMission" class="bigDeploy">BEGIN DEPLOYMENT</button>
+    <p class="fine">This interface test keeps the combat layer behind deployment. The base is the home screen.</p>
   </section>
 
-  <section id="results" class="panel compact">
-    <h3 id="resultTitle">MISSION COMPLETE</h3>
-    <p id="resultText"></p>
-    <div id="resultLoot"></div>
-    <button data-action="base" class="primary">RETURN TO BASE</button>
-    <button data-action="mission">DEPLOY AGAIN</button>
+  <section id="infoPanel" class="panel compact">
+    <button class="closeX panelClose">×</button>
+    <h3 id="infoTitle">STRUCTURE</h3>
+    <p id="infoText"></p>
   </section>
 
-  <section id="pausePanel" class="panel compact">
-    <h3>PAUSED</h3>
-    <button data-action="resume" class="primary">RESUME</button>
-    <button data-action="base">ABORT TO BASE</button>
+  <section id="menuPanel" class="panel compact">
+    <button class="closeX panelClose">×</button>
+    <small class="eyebrow">STAR BASE: DEAD ORBIT</small>
+    <h3>BASE COMMAND</h3>
+    <button>ACCOUNT</button>
+    <button>CONTROLS</button>
+    <button>PRIVACY</button>
+    <p class="fine">v0.3 interface vertical slice</p>
   </section>
 
   <script src="game.js"></script>
