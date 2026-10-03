@@ -1,0 +1,33 @@
+{
+  "engine": {
+    "rated_output_kw": 22.37,
+    "brake_thermal_efficiency": 0.32,
+    "exhaust_energy_fraction_of_fuel": 0.30,
+    "accessory_load_fraction_of_engine_output": 0.10
+  },
+  "recovery": {
+    "heat_exchanger_effectiveness": 0.60,
+    "expander_thermal_to_shaft_efficiency": 0.10,
+    "alternator_efficiency": 0.90,
+    "fixed_parasitics_kw": 0.08,
+    "variable_parasitics_fraction_of_gross_electric": 0.08,
+    "backpressure_penalty_fraction_of_engine_output": 0.01,
+    "number_of_parallel_exhaust_modules": 2
+  },
+  "operating_points": {
+    "cold_start": 0.10,
+    "light_load": 0.25,
+    "cruise": 0.50,
+    "high_load": 0.75,
+    "full_load": 1.00
+  },
+  "protection": {
+    "max_turbine_rpm": 120000,
+    "max_working_pressure_bar": 20,
+    "max_exhaust_backpressure_kpa": 15
+  },
+  "notes": {
+    "belt_load": "10% is a starting average assumption. A 30% accessory fraction is modeled as a possible low-engine-load condition, not as a normal full-load loss.",
+    "working_fluid": "The model is fluid-agnostic. Water/steam and ORC fluids require separate property models before hardware sizing."
+  }
+}
